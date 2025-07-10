@@ -1,0 +1,6 @@
+model Blob {
+  id         String   @id @default(uuid())
+  url        String
+  property   PropertyInfo @relation(fields: [propertyId], references: [id])
+  propertyId String
+}

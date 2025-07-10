@@ -7,12 +7,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ---- Test.prisma ----
-model Test {
-  id       Int    @id @default(autoincrement())
-  title    String
-  content  String
-  authorId Int
+// ---- Blob.prisma ----
+model Blob {
+  id         String   @id @default(uuid())
+  url        String
+  property   PropertyInfo @relation(fields: [propertyId], references: [id])
+  propertyId String
+}
+
+// ---- PropertyInfo.prisma ----
+model PropertyInfo {
+  id           String   @id
+  images       Blob[]  // One-to-many relation
+  price        String
+  beds         Int
+  baths        Int
+  sqft         Int
+  address      String
+  realtor      String
+  realtorLogo  String
 }
 
 // ---- User.prisma ----
