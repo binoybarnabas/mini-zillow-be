@@ -1,0 +1,11 @@
+model PropertyInfo {
+  id           String   @id
+  images       Blob[]  // One-to-many relation
+  price        String
+  beds         Int
+  baths        Int
+  sqft         Int
+  address      String
+  realtor      String
+  realtorLogo  String
+}
