@@ -1,9 +1,10 @@
-import { PrismaClient } from '@prisma/client';
 import crypto from 'crypto';
-const prisma = new PrismaClient();
+import bcrypt from 'bcrypt';
+import prisma from '../src/utils/prisma';
 
 async function main() {
-  const hashedPassword = crypto.createHash('sha256').update('yourPassword123').digest('hex');
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash('password', saltRounds);
   const user = await prisma.user.create({
       data: 
       {
@@ -16,12 +17,12 @@ async function main() {
   // 2. Create a property with images
   const property = await prisma.propertyInfo.create({
     data: {
-      id: '1',
-      price: '$2,550,000',
-      beds: 8,
-      baths: 9,
-      sqft: 4691,
-      address: '1061 NW North River Dr, Miami, FL 33136',
+      id: '2',
+      price: '$550,000',
+      beds: 6,
+      baths: 10,
+      sqft: 5000,
+      address: '1061 NW North River Dr, florida, FL 33136',
       realtor: 'COMPASS FLORIDA, LLC.',
       realtorLogo: 'https://miami-realtors.com/logo.png',
       images: {
