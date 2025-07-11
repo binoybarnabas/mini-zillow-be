@@ -3,7 +3,6 @@ import { login } from "../services/auth.service";
 import { LoginCredential } from "../apimodels/dtos/auth.types";
 
 export const auth = async (_req: Request, res: Response) => {
-    console.log("request",_req);
   try {
     const requestBody : LoginCredential = _req.body;
     
