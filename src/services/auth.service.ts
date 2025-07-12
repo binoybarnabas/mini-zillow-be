@@ -4,9 +4,9 @@ import { LoginCredential } from "../apimodels/dtos/auth.types";
 import { generateToken } from "../utils/jwt";
 
 const login = async (credentials: LoginCredential) => {
-  const email = credentials.username;
+  const email = credentials.email;
   const user = await prisma.user.findUnique({ where: { email } });
-  // Validation
+
   if (!user) {
     throw new Error("Invalid email or password");
   }

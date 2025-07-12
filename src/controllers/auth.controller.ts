@@ -6,13 +6,13 @@ export const auth = async (_req: Request, res: Response) => {
   try {
     const requestBody : LoginCredential = _req.body;
     
-    if (!requestBody.username || !requestBody.password) {
+    if (!requestBody.email || !requestBody.password) {
       return res.status(400).json({ message: 'Email and password are required' });
     }
     
     // Basic email format check
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(requestBody.username)) {
+    if (!emailRegex.test(requestBody.email)) {
       return res.status(400).json({ message: 'Invalid email format' });
     }
 
