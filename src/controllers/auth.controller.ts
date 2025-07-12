@@ -30,9 +30,9 @@ export const auth = async (_req: Request, res: Response) => {
 // User Registation
 export const register = async (req: Request, res: Response) => {
 
-  const { name, email, password, confirmPassword } = req.body;
+  const { name, email, password } = req.body;
 
-  const errors = validateRegistration({ name, email, password, confirmPassword });
+  const errors = validateRegistration({ name, email, password });
   if (Object.keys(errors).length > 0) {
     return res.status(400).json({ errors });
   }
