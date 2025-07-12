@@ -4,9 +4,9 @@ import { LoginCredential } from "../apimodels/dtos/auth.types";
 import { generateToken } from "../utils/jwt";
 
 const login = async (credentials: LoginCredential) => {
-  const email = credentials.username;
+  const email = credentials.email;
   const user = await prisma.user.findUnique({ where: { email } });
-  // Validation
+
   if (!user) {
     throw new Error("Invalid email or password");
   }
@@ -30,4 +30,25 @@ const login = async (credentials: LoginCredential) => {
   
 };
 
-export { login };
+const registerUser = async (name: string, email: string, password: string) => {
+  const existing = await prisma.user.findUnique({ where: { email } });
+  
+  if (existing) {
+    throw new Error('Email already registered');
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const user = await prisma.user.create({
+    data: {
+      name: name,
+      email,
+      password: hashedPassword
+    }
+  });
+
+  return user;
+};
+
+
+export { login, registerUser };
