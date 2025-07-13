@@ -1,0 +1,85 @@
+import prisma from '../utils/prisma';
+import cloudinary from '../utils/cloudinary';
+import crypto from 'crypto';
+import sharp from 'sharp';
+
+export const createProperty = async (
+  formData: {
+    price: string;
+    beds: number;
+    baths: number;
+    sqft: number;
+    address: string;
+    realtor: string;
+    // realtorLogo: string;
+  },
+  files: Express.Multer.File[] = []
+) => {
+  if (!Array.isArray(files) || files.length === 0) {
+    throw new Error('At least one image is required');
+  }
+
+  // Validate formData fields
+  const requiredFields = ['price', 'beds', 'baths', 'sqft', 'address', 'realtor'];
+  for (const field of requiredFields) {
+    if (!formData[field as keyof typeof formData]) {
+      throw new Error(`Missing required field: ${field}`);
+    }
+  }
+
+  const propertyId = crypto.randomUUID();
+  const urls: string[] = [];
+
+  for (const file of files) {
+    if (!file.buffer || !file.mimetype.startsWith('image/')) {
+      throw new Error('Invalid file type');
+    }
+
+    const compressedBuffer = await sharp(file.buffer)
+    .resize({ width: 1280 }) // Resize width (optional)
+    .jpeg({ quality: 70 })    // Compress to JPEG with 70% quality
+    .toBuffer();
+    
+    const result: any = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'mini-zillow',
+          resource_type: 'image',
+          public_id: `${propertyId}-${Date.now()}`,
+        },
+        (error, result) => {
+          if (error || !result) return reject(new Error('Cloudinary upload failed'));
+          resolve(result);
+        }
+      );
+
+      stream.end(compressedBuffer);
+    });
+
+    urls.push(result.secure_url);
+  }
+
+  const property = await prisma.propertyInfo.create({
+    data: {
+      id: propertyId,
+      ...formData,
+      images: {
+        create: urls.map(url => ({ url })),
+      },
+    },
+    include: { images: true },
+  });
+
+  return property;
+};
+
+export const getAllProperties = async () => {
+  return await prisma.propertyInfo.findMany({
+    include: {
+      images: true, // Fetch related images from Blob table
+    },
+    orderBy: {
+      price: 'asc', // Optional: sort by price or any other field
+    },
+  });
+};

@@ -7,5 +7,4 @@ model PropertyInfo {
   sqft         Int
   address      String
   realtor      String
-  realtorLogo  String
 }
