@@ -83,3 +83,12 @@ export const getAllProperties = async () => {
     },
   });
 };
+
+export const getPropertyById = async (id: string) => {
+  return await prisma.propertyInfo.findUnique({
+    where: { id },
+    include: {
+      images: true, // Include related images
+    },
+  });
+};

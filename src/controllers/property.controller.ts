@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createProperty, getAllProperties } from '../services/property.service';
+import { createProperty, getAllProperties, getPropertyById} from '../services/property.service';
 
 export const handleCreateProperty = async (req: Request, res: Response) => {
   try {
@@ -56,5 +56,22 @@ export const handleGetAllProperties = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Failed to fetch properties', error });
+  }
+};
+
+export const handleGetPropertyById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const property = await getPropertyById(id);
+
+    if (!property) {
+      return res.status(404).json({ message: 'Property not found' });
+    }
+
+    res.status(200).json({ property });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to fetch property', error });
   }
 };
