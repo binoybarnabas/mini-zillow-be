@@ -11,7 +11,9 @@ export const createProperty = async (
     sqft: number;
     address: string;
     realtor: string;
-    // realtorLogo: string;
+    createdBy: number;
+    description: string;
+    listingType: number;
   },
   files: Express.Multer.File[] = []
 ) => {
@@ -20,7 +22,7 @@ export const createProperty = async (
   }
 
   // Validate formData fields
-  const requiredFields = ['price', 'beds', 'baths', 'sqft', 'address', 'realtor'];
+  const requiredFields = ['price', 'beds', 'baths', 'sqft', 'address', 'realtor','listingType'];
   for (const field of requiredFields) {
     if (!formData[field as keyof typeof formData]) {
       throw new Error(`Missing required field: ${field}`);
@@ -58,15 +60,15 @@ export const createProperty = async (
 
     urls.push(result.secure_url);
   }
-
+  formData.listingType = Number(formData.listingType);
   const property = await prisma.propertyInfo.create({
     data: {
       id: propertyId,
       ...formData,
       images: {
         create: urls.map(url => ({ url })),
+      }
       },
-    },
     include: { images: true },
   });
 

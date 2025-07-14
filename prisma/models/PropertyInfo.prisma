@@ -7,4 +7,9 @@ model PropertyInfo {
   sqft         Int
   address      String
   realtor      String
+  description  String
+  listingType  Int
+  createdAt DateTime @default(now())
+  createdBy    Int       // Foreign key
+  user      User      @relation(fields: [createdBy], references: [id])
 }

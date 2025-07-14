@@ -25,6 +25,11 @@ model PropertyInfo {
   sqft         Int
   address      String
   realtor      String
+  description  String
+  listingType  Int
+  createdAt DateTime @default(now())
+  createdBy    Int       // Foreign key
+  user      User      @relation(fields: [createdBy], references: [id])
 }
 
 // ---- User.prisma ----
@@ -34,4 +39,5 @@ model User {
   email    String   @unique
   password String
   createdAt DateTime @default(now())
+  properties PropertyInfo[] 
 }
