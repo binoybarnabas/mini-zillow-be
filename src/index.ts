@@ -3,7 +3,6 @@ import cors from 'cors';
 import userRoutes from './routes/user.routes';
 import authRotes from './routes/auth.routes'
 import propertyRoutes from './routes/property.routes';
-import serverless from 'serverless-http';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -25,4 +24,3 @@ app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-export const handler = serverless(app);
