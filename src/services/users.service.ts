@@ -1,7 +1,13 @@
+import prisma from "../utils/prisma";
 export const getAllUsers = async () => {
-  // Temporary mock
-  return [
-    { id: 1, name: 'Alice' },
-    { id: 2, name: 'Bob' }
-  ];
+  return await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
 };

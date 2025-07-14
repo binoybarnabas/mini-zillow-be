@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { createProperty, getAllProperties, getPropertyById} from '../services/property.service';
+import { getUserIdFromToken } from '../utils/jwt';
 
 export const handleCreateProperty = async (req: Request, res: Response) => {
   try {
@@ -12,8 +13,23 @@ export const handleCreateProperty = async (req: Request, res: Response) => {
       sqft,
       address,
       realtor,
-      // realtorLogo,
+      description,
+      listingType
     } = req.body;
+    
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: 'Authorization token missing or invalid' });
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    let userDataDecoded: { userId: number};
+    try {
+      userDataDecoded = getUserIdFromToken(token); // contains userId
+    } catch (error) {
+      return res.status(401).json({ message: 'Invalid or expired token' });
+    }
 
     // Basic Validation
     if (!price || !beds || !baths || !sqft || !address || !realtor) {
@@ -37,7 +53,9 @@ export const handleCreateProperty = async (req: Request, res: Response) => {
         sqft: parsedSqft,
         address,
         realtor,
-        // realtorLogo,
+        createdBy: userDataDecoded.userId,
+        description,
+        listingType
       },
       files
     );
