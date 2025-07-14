@@ -13,7 +13,7 @@ This is the backend server for the **Mini-Zillow** project, built with **Node.js
 ## 🚀 Features
 
 - 🔒 JWT Authentication
-- 📄 RESTful APIs for properties, users
+- 📄 RESTful APIs for properties, users, image file upload handling using cloudinary.
 - 🌍 CORS configuration for frontend integration
 - 🗂 Modular routing and middleware
 - 🛠 Environment-based configuration
