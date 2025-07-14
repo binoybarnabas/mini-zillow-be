@@ -11,7 +11,7 @@
     "migrate": "npm run generate:schema && prisma migrate dev",
     "generate": "npm run generate:schema && prisma generate",
     "start": "node dist/index.ts",
-    "build": "tsc",
+    "build": "tsc && [my-framework] build --output public",
     "vercel-build": "prisma generate && prisma migrate deploy && tsc"
   },
   "keywords": [],
