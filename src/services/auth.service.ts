@@ -23,6 +23,7 @@ const login = async (credentials: LoginCredential) => {
     token,
     user: {
       id: user.id,
+      isAdmin: user.isAdmin,
       name: user.name,
       email: user.email,
     },

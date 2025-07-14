@@ -12,7 +12,6 @@ export const handleGetAllProperties = async (req: Request, res: Response) => {
 };
 
 export const handleDeleteProperty = async (req: Request, res: Response) => {
-    console.log("request",req);
   try {
     const { id } = req.params;
     await deleteProperty(id);
