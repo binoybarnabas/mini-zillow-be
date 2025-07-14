@@ -1,8 +1,8 @@
 import express from "express";
 import cors from 'cors';
-import userRoutes from './routes/user.routes';
-import authRotes from './routes/auth.routes'
-import propertyRoutes from './routes/property.routes';
+import userRoutes from '../src/routes/user.routes';
+import authRotes from '../src/routes/auth.routes'
+import propertyRoutes from '../src/routes/property.routes';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
