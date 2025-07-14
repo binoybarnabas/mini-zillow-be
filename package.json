@@ -10,7 +10,8 @@
     "generate:schema": "tsx prisma/build-schema.ts",
     "migrate": "npm run generate:schema && prisma migrate dev",
     "generate": "npm run generate:schema && prisma generate",
-    "start": "node index"
+    "start": "node index",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
