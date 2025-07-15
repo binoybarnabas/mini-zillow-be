@@ -96,7 +96,6 @@ export const handleGetPropertyById = async (req: Request, res: Response) => {
 
 export const handleUpdateProperty = async (req: Request, res: Response) => {
 
-  console.log("req.body;",req.body);
   try {
     const { id } = req.params;
     const files = req.files as Express.Multer.File[] || [];
@@ -150,6 +149,7 @@ export const handleUpdateProperty = async (req: Request, res: Response) => {
         address,
         realtor,
         description,
+        modifiedBy: userDataDecoded.userId,
         listingType: Number(listingType),
       },
       files
