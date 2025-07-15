@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createProperty, getAllProperties, getPropertyById} from '../services/property.service';
+import { createProperty, getAllProperties, getPropertyById, updateProperty} from '../services/property.service';
 import { getUserIdFromToken } from '../utils/jwt';
 
 export const handleCreateProperty = async (req: Request, res: Response) => {
@@ -91,5 +91,73 @@ export const handleGetPropertyById = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Failed to fetch property', error });
+  }
+};
+
+export const handleUpdateProperty = async (req: Request, res: Response) => {
+
+  console.log("req.body;",req.body);
+  try {
+    const { id } = req.params;
+    const files = req.files as Express.Multer.File[] || [];
+
+    const {
+      price,
+      beds,
+      baths,
+      sqft,
+      address,
+      realtor,
+      description,
+      listingType,
+    } = req.body;
+
+    
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: 'Authorization token missing or invalid' });
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    let userDataDecoded: { userId: number };
+    try {
+      userDataDecoded = getUserIdFromToken(token);
+    } catch (error) {
+      return res.status(401).json({ message: 'Invalid or expired token' });
+    }
+
+    // Validate fields
+    if (!price || !beds || !baths || !sqft || !address || !realtor) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    const parsedBeds = Number(beds);
+    const parsedBaths = Number(baths);
+    const parsedSqft = Number(sqft);
+
+    if (isNaN(parsedBeds) || isNaN(parsedBaths) || isNaN(parsedSqft)) {
+      return res.status(400).json({ message: 'Beds, baths, and sqft must be numbers' });
+    }
+
+    const updated = await updateProperty(
+      id,
+      {
+        price,
+        beds: parsedBeds,
+        baths: parsedBaths,
+        sqft: parsedSqft,
+        address,
+        realtor,
+        description,
+        listingType: Number(listingType),
+      },
+      files
+    );
+
+    return res.status(200).json({ message: 'Property updated successfully', property: updated });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Something went wrong', error: (error as Error).message });
   }
 };

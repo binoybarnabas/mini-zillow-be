@@ -81,7 +81,7 @@ export const getAllProperties = async () => {
       images: true, // Fetch related images from Blob table
     },
     orderBy: {
-      price: 'asc', // Optional: sort by price or any other field
+      createdAt: 'desc', // Optional: sort by price or any other field
     },
   });
 };
@@ -93,4 +93,74 @@ export const getPropertyById = async (id: string) => {
       images: true, // Include related images
     },
   });
+};
+
+export const updateProperty = async (
+  id: string,
+  data: {
+    price: string;
+    beds: number;
+    baths: number;
+    sqft: number;
+    address: string;
+    realtor: string;
+    description: string;
+    listingType: number;
+  },
+  files: Express.Multer.File[] = []
+) => {
+  const existing = await prisma.propertyInfo.findUnique({
+    where: { id },
+    include: { images: true },
+  });
+
+  if (!existing) throw new Error('Property not found');
+
+  const urls: string[] = [];
+
+  if (files.length > 0) {
+    for (const file of files) {
+      if (!file.buffer || !file.mimetype.startsWith('image/')) {
+        throw new Error('Invalid file type');
+      }
+
+      const compressedBuffer = await sharp(file.buffer)
+        .resize({ width: 1280 })
+        .jpeg({ quality: 70 })
+        .toBuffer();
+
+      const result: any = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: 'mini-zillow',
+            resource_type: 'image',
+            public_id: `${id}-${Date.now()}`,
+          },
+          (error, result) => {
+            if (error || !result) return reject(new Error('Cloudinary upload failed'));
+            resolve(result);
+          }
+        );
+        stream.end(compressedBuffer);
+      });
+
+      urls.push(result.secure_url);
+    }
+  }
+
+  const updated = await prisma.propertyInfo.update({
+    where: { id },
+    data: {
+      ...data,
+      images: files.length
+        ? {
+            deleteMany: {}, 
+            create: urls.map((url) => ({ url })), 
+          }
+        : undefined,
+    },
+    include: { images: true },
+  });
+
+  return updated;
 };
