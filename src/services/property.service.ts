@@ -106,6 +106,7 @@ export const updateProperty = async (
     realtor: string;
     description: string;
     listingType: number;
+    modifiedBy: number;
   },
   files: Express.Multer.File[] = []
 ) => {

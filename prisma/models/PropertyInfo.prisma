@@ -1,6 +1,6 @@
 model PropertyInfo {
   id           String   @id
-  images       Blob[]  // One-to-many relation
+  images       Blob[]   // One-to-many relation
   price        String
   beds         Int
   baths        Int
@@ -9,7 +9,12 @@ model PropertyInfo {
   realtor      String
   description  String
   listingType  Int
-  createdAt DateTime @default(now())
-  createdBy    Int       // Foreign key
-  user      User      @relation(fields: [createdBy], references: [id])
+  createdAt    DateTime @default(now())
+  modifiedAt   DateTime? @updatedAt
+  createdBy    Int
+  modifiedBy   Int?
+
+  // Relations
+  createdUser  User     @relation("CreatedProperties", fields: [createdBy], references: [id])
+  modifiedUser User?    @relation("ModifiedProperties", fields: [modifiedBy], references: [id])
 }
